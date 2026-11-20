@@ -1,3 +1,4 @@
+#include "Tree.h"
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -5,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "Tree.h"
+std::vector<Tree<std::string>*> raizes;
 
 Tree<std::string>* buscarNo(const std::vector<Tree<std::string>*>& nos, const std::string& nome) {
     for(Tree<std::string>* no : nos) {
@@ -67,6 +68,37 @@ std::vector<Tree<std::string>*> lerArquivo(const std::string& nomeArquivo) {
     }
 
     return raizes;
+}
+
+TreeTDA<std::string>* buscarNaFloresta(const std::string& nome) {
+    for(Tree<std::string>* raiz : raizes) {
+        for(TreeTDA<std::string>* no : raiz->breadth()) {
+            if(no->getItem() == nome) {
+                return no;
+            }
+        }
+    }
+    return nullptr;
+}
+
+bool ehAncestral(std::string nome1, std::string nome2) {
+    Tree<std::string>* pessoa1 = dynamic_cast<Tree<std::string>*>(buscarNaFloresta(nome1));
+    Tree<std::string>* pessoa2 = dynamic_cast<Tree<std::string>*>(buscarNaFloresta(nome2));
+    Tree<std::string>* ancestral1 = dynamic_cast<Tree<std::string>*>(pessoa1->getParent());
+    Tree<std::string>* ancestral2 = dynamic_cast<Tree<std::string>*>(pessoa2->getParent());
+    while(ancestral1 != nullptr) {
+        if(ancestral1 == ancestral2) {
+            return true;
+        }
+        ancestral1 = dynamic_cast<Tree<std::string>*>(ancestral1->getParent());
+    }
+    while(ancestral2 != nullptr) {
+        if(ancestral2 == ancestral1) {
+            return true;
+        }
+        ancestral2 = dynamic_cast<Tree<std::string>*>(ancestral2->getParent());
+    }
+    return false;
 }
 
 int main() {

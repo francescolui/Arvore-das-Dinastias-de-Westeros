@@ -1,5 +1,4 @@
-#ifndef TREE_H
-#define TREE_H
+#pragma once
 
 #include "TreeTDA.h"
 #include <queue>
@@ -206,5 +205,3 @@ int Tree<T>::level() {
     }
     return lvl;
 }
-
-#endif
