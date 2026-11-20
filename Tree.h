@@ -3,32 +3,31 @@
 #include "TreeTAD.h"
 #include <vector>
 
-class Tree : public TreeTDA {
+class Tree : public TreeTAD {
+private:
+    TreeTAD* parent;
+    int element;
+    std::vector<TreeTAD*> children;
 
-        private:
-            TreeTDA* parent;
-            int element;
-            std::vector<TreeTDA*> children;
+    void preOrderAUX(TreeTAD* node, std::vector<TreeTAD*>& order);
+    void posOrderAUX(TreeTAD* node, std::vector<TreeTAD*>& order);
+    int heightAUX(TreeTAD* node);
 
-            void preOrderAUX(TreeTDA* node, std::vector<TreeTDA*>& order);
-            void posOrderAUX(TreeTDA* node, std::vector<TreeTDA*>& order);
-            int heightAUX(TreeTDA* node);
+public:
+    Tree(int element);
+    ~Tree();
+    void addChild(TreeTAD* tree) override;
+    void addChild(int index, TreeTAD* tree) override;
+    TreeTAD* removeChild(int index) override;
+    TreeTAD* getChild(int index) override;
+    int childrenCount() const override;
+    int size() const override;
+    int getItem() const override;
+    TreeTAD* getParent() const override;
 
-        public:
-            Tree(int element);
-            ~Tree();
-            void addChild(TreeTDA* tree) override;
-            void addChild(int index, TreeTDA* tree) override;
-            TreeTDA* removeChild(int index) override;
-            TreeTDA* getChild(int index) override;
-            int childrenCount() const override;
-            int size() const override;
-            int getItem() const override;
-            TreeTDA* getParent() const override;
-
-            std::vector<TreeTDA*> preOrder();
-            std::vector<TreeTDA*> posOrder();
-            std::vector<TreeTDA*> breadth();
-            int height();
-            int level();
+    std::vector<TreeTAD*> preOrder();
+    std::vector<TreeTAD*> posOrder();
+    std::vector<TreeTAD*> breadth();
+    int height();
+    int level();
 };
