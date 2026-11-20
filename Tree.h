@@ -10,8 +10,8 @@ template <typename T>
 class Tree : public TreeTDA<T> {
 private:
     TreeTDA<T>* parent;
-    T element;
     std::vector<TreeTDA<T>*> children;
+    T element;
 
     void preOrderAux(TreeTDA<T>* node, std::vector<TreeTDA<T>*>& order);
     void posOrderAux(TreeTDA<T>* node, std::vector<TreeTDA<T>*>& order);
@@ -48,38 +48,38 @@ Tree<T>::~Tree() {
 
 template <typename T>
 void Tree<T>::addChild(TreeTDA<T>* tree) {
-    if (tree == nullptr) {
+    if(tree == nullptr) {
         return;
     }
     children.push_back(tree);
-    Tree<T>* tree2 = dynamic_cast<Tree<T>*>(tree);
-    if (tree2 != nullptr) {
-        tree2->parent = this;
+    Tree<T>* child = dynamic_cast<Tree<T>*>(tree);
+    if(child != nullptr) {
+        child->parent = this;
     }
 }
 
 template <typename T>
 void Tree<T>::addChild(int index, TreeTDA<T>* tree) {
-    if (index < 0 || index > static_cast<int>(children.size())) {
+    if(index < 0 || index > static_cast<int>(children.size())) {
         throw std::out_of_range("Index out of range");
     }
-    if (tree == nullptr) {
+    if(tree == nullptr) {
         return;
     }
     children.insert(children.begin() + index, tree);
     Tree<T>* tree2 = dynamic_cast<Tree<T>*>(tree);
-    if (tree2 != nullptr) {
+    if(tree2 != nullptr) {
         tree2->parent = this;
     }
 }
 
 template <typename T>
 TreeTDA<T>* Tree<T>::removeChild(int index) {
-    if (index >= 0 && index < static_cast<int>(children.size())) {
+    if(index >= 0 && index < static_cast<int>(children.size())) {
         TreeTDA<T>* removed = children[index];
         children.erase(children.begin() + index);
         Tree<T>* removedTree = dynamic_cast<Tree<T>*>(removed);
-        if (removedTree != nullptr) {
+        if(removedTree != nullptr) {
             removedTree->parent = nullptr;
         }
         return removed;
@@ -89,7 +89,7 @@ TreeTDA<T>* Tree<T>::removeChild(int index) {
 
 template <typename T>
 TreeTDA<T>* Tree<T>::getChild(int index) {
-    if (index >= 0 && index < static_cast<int>(children.size())) {
+    if(index >= 0 && index < static_cast<int>(children.size())) {
         return children.at(index);
     }
     return nullptr;
@@ -121,7 +121,7 @@ TreeTDA<T>* Tree<T>::getParent() const {
 
 template <typename T>
 void Tree<T>::preOrderAux(TreeTDA<T>* node, std::vector<TreeTDA<T>*>& order) {
-    if (node == nullptr) {
+    if(node == nullptr) {
         return;
     }
     order.push_back(node);
@@ -139,7 +139,7 @@ std::vector<TreeTDA<T>*> Tree<T>::preOrder() {
 
 template <typename T>
 void Tree<T>::posOrderAux(TreeTDA<T>* node, std::vector<TreeTDA<T>*>& order) {
-    if (node == nullptr) {
+    if(node == nullptr) {
         return;
     }
     for (int i = 0; i < node->childrenCount(); i++) {
@@ -168,7 +168,7 @@ std::vector<TreeTDA<T>*> Tree<T>::breadth() {
 
         for (int i = 0; i < current->childrenCount(); i++) {
             TreeTDA<T>* child = current->getChild(i);
-            if (child != nullptr) {
+            if(child != nullptr) {
                 q.push(child);
             }
         }
@@ -178,13 +178,13 @@ std::vector<TreeTDA<T>*> Tree<T>::breadth() {
 
 template <typename T>
 int Tree<T>::heightAux(TreeTDA<T>* node) {
-    if (node == nullptr || node->childrenCount() == 0) {
+    if(node == nullptr || node->childrenCount() == 0) {
         return 0;
     }
     int maxChildHeight = 0;
     for (int i = 0; i < node->childrenCount(); i++) {
         int h = heightAux(node->getChild(i));
-        if (h > maxChildHeight) {
+        if(h > maxChildHeight) {
             maxChildHeight = h;
         }
     }
