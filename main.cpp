@@ -101,6 +101,35 @@ bool ehAncestral(std::string nome1, std::string nome2) {
     return false;
 }
 
+bool saoIrmaos(std::string nome1, std::string nome2) {
+    Tree<std::string>* pessoa1 = dynamic_cast<Tree<std::string>*>(buscarNaFloresta(nome1));
+    Tree<std::string>* pessoa2 = dynamic_cast<Tree<std::string>*>(buscarNaFloresta(nome2));
+
+    if(pessoa1 == pessoa2 || pessoa1 == nullptr || pessoa2 == nullptr) return false;
+
+    return pessoa1->getParent() != nullptr && pessoa1->getParent() == pessoa2->getParent();
+}
+
+bool saoPrimos(std::string nome1, std::string nome2) {
+    Tree<std::string>* pessoa1 = dynamic_cast<Tree<std::string>*>(buscarNaFloresta(nome1));
+    Tree<std::string>* pessoa2 = dynamic_cast<Tree<std::string>*>(buscarNaFloresta(nome2));
+
+    if(pessoa1 == pessoa2 || pessoa1 == nullptr || pessoa2 == nullptr) return false;
+
+    Tree<std::string>* pai1 = dynamic_cast<Tree<std::string>*>(pessoa1->getParent());
+    Tree<std::string>* pai2 = dynamic_cast<Tree<std::string>*>(pessoa2->getParent());
+
+    if(pai1 == pai2 || pai1 == nullptr || pai2 == nullptr) return false;
+    
+    Tree<std::string>* avo1 = dynamic_cast<Tree<std::string>*>(pai1->getParent());
+    Tree<std::string>* avo2 = dynamic_cast<Tree<std::string>*>(pai2->getParent());
+
+    if(avo1 == avo2 || avo1 == nullptr || avo2 == nullptr) return false;
+
+    return avo1 != nullptr && avo1 == avo2;
+
+}
+
 int main() {
     std::vector<Tree<std::string>*> raizes = lerArquivo("relacoes_got.txt");
 
