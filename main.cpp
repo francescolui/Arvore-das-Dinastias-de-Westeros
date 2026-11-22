@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-std::vector<Tree<std::string>*> raizes;
+std::vector<Tree<std::string>*> raizesGlobal;
 
 Tree<std::string>* buscarNo(const std::vector<Tree<std::string>*>& nos, const std::string& nome) {
     for(Tree<std::string>* no : nos) {
@@ -71,7 +71,7 @@ std::vector<Tree<std::string>*> lerArquivo(const std::string& nomeArquivo) {
 }
 
 TreeTDA<std::string>* buscarNaFloresta(const std::string& nome) {
-    for(Tree<std::string>* raiz : raizes) {
+    for(Tree<std::string>* raiz : raizesGlobal) {
         for(TreeTDA<std::string>* no : raiz->breadth()) {
             if(no->getItem() == nome) {
                 return no;
@@ -88,16 +88,19 @@ bool ehAncestral(std::string nome1, std::string nome2) {
     Tree<std::string>* ancestral2 = dynamic_cast<Tree<std::string>*>(pessoa2->getParent());
     while(ancestral1 != nullptr) {
         if(ancestral1 == ancestral2) {
+            std::cout << "O ancestral em comum de " << nome1 << " e " << nome2 << " é " << ancestral1 << "." << std::endl;
             return true;
         }
         ancestral1 = dynamic_cast<Tree<std::string>*>(ancestral1->getParent());
     }
     while(ancestral2 != nullptr) {
         if(ancestral2 == ancestral1) {
+            std::cout << "O ancestral em comum de " << nome1 << " e " << nome2 << " é " << ancestral1 << "." << std::endl;
             return true;
         }
         ancestral2 = dynamic_cast<Tree<std::string>*>(ancestral2->getParent());
     }
+    std::cout << nome1 << " e " << nome2 << " não tem ancestral em comum." << std::endl;
     return false;
 }
 
@@ -105,41 +108,59 @@ bool saoIrmaos(std::string nome1, std::string nome2) {
     Tree<std::string>* pessoa1 = dynamic_cast<Tree<std::string>*>(buscarNaFloresta(nome1));
     Tree<std::string>* pessoa2 = dynamic_cast<Tree<std::string>*>(buscarNaFloresta(nome2));
 
-    if(pessoa1 == pessoa2 || pessoa1 == nullptr || pessoa2 == nullptr) return false;
+    if(pessoa1 == pessoa2 || pessoa1 == nullptr || pessoa2 == nullptr) {
+        std::cout << nome1 << " e " << nome2 << " nao sao irmaos." << std::endl;
+        return false;
+    }
 
-    return pessoa1->getParent() != nullptr && pessoa1->getParent() == pessoa2->getParent();
+    if(pessoa1->getParent() != nullptr && pessoa1->getParent() == pessoa2->getParent()) {
+        std::cout << nome1 << " e " << nome2 << " sao irmaos." << std::endl;
+        return true;
+    } else {
+        std::cout << nome1 << " e " << nome2 << " nao sao irmaos." << std::endl;
+        return false;
+    }
 }
 
 bool saoPrimos(std::string nome1, std::string nome2) {
     Tree<std::string>* pessoa1 = dynamic_cast<Tree<std::string>*>(buscarNaFloresta(nome1));
     Tree<std::string>* pessoa2 = dynamic_cast<Tree<std::string>*>(buscarNaFloresta(nome2));
 
-    if(pessoa1 == pessoa2 || pessoa1 == nullptr || pessoa2 == nullptr) return false;
+    if(pessoa1 == pessoa2 || pessoa1 == nullptr || pessoa2 == nullptr) {
+        std::cout << nome1 << " e " << nome2 << " nao sao primos." << std::endl;
+        return false;
+    }
 
     Tree<std::string>* pai1 = dynamic_cast<Tree<std::string>*>(pessoa1->getParent());
     Tree<std::string>* pai2 = dynamic_cast<Tree<std::string>*>(pessoa2->getParent());
 
-    if(pai1 == pai2 || pai1 == nullptr || pai2 == nullptr) return false;
+    if(pai1 == pai2 || pai1 == nullptr || pai2 == nullptr) {
+        std::cout << nome1 << " e " << nome2 << " nao sao primos." << std::endl;
+        return false;
+    }
     
     Tree<std::string>* avo1 = dynamic_cast<Tree<std::string>*>(pai1->getParent());
     Tree<std::string>* avo2 = dynamic_cast<Tree<std::string>*>(pai2->getParent());
 
-    if(avo1 == avo2 || avo1 == nullptr || avo2 == nullptr) return false;
-
-    return avo1 != nullptr && avo1 == avo2;
-
+    if(avo1 != nullptr && avo1 == avo2) {
+        std::cout << nome1 << " e " << nome2 << " sao primos." << std::endl;
+        return true;
+    } else {
+        std::cout << nome1 << " e " << nome2 << " nao sao primos." << std::endl;
+        return false;
+    }
 }
 
 int main() {
-    std::vector<Tree<std::string>*> raizes = lerArquivo("relacoes_got.txt");
+    raizesGlobal = lerArquivo("relacoes_got.txt");
 
-    if(raizes.empty()) {
+    if(raizesGlobal.empty()) {
         return 1;
     }
 
-    std::cout << "Total de arvores (casas): " << raizes.size() << "\n" << std::endl;
+    std::cout << "Total de arvores (casas): " << raizesGlobal.size() << "\n" << std::endl;
 
-    for(Tree<std::string>* raiz : raizes) {
+    for(Tree<std::string>* raiz : raizesGlobal) {
         std::cout << "Raiz: " << raiz->getItem()
                   << " | Nos(filhos): " << raiz->size()
                   << " | Altura(geracoes): " << raiz->height() << std::endl;
@@ -150,8 +171,18 @@ int main() {
         std::cout << std::endl;
     }
 
+    ehAncestral("Rickard Stark", "Robb Stark"); //verdadeiro
+    ehAncestral("Rickard Stark", "Jon Snow"); //verdadeiro
+    ehAncestral("Aerys II Targaryen", "Jon Snow"); //verdadeiro
+    saoIrmaos("Robb Stark", "Sansa Stark"); //verdadeiro
+    saoIrmaos("Robb Stark", "Jon Snow"); //falso
+    saoIrmaos("Doran Martell", "Elia Martell"); //verdadeiro
+    saoPrimos("Robb Stark", "Jon Snow"); //verdadeiro
+    saoPrimos("Cersei Lannister", "Martyn Lannister"); //verdadeiro
+    saoPrimos("Rodrik Greyjoy", "Theon Greyjoy"); //falso
+
     //libera memória
-    for(Tree<std::string>* raiz : raizes) {
+    for(Tree<std::string>* raiz : raizesGlobal) {
         delete raiz;
     }
 
