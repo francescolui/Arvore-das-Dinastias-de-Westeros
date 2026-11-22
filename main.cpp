@@ -81,26 +81,40 @@ TreeTDA<std::string>* buscarNaFloresta(const std::string& nome) {
     return nullptr;
 }
 
-bool ehAncestral(std::string nome1, std::string nome2) {
+bool ancestralComumMaisProximo(std::string nome1, std::string nome2) {
     Tree<std::string>* pessoa1 = dynamic_cast<Tree<std::string>*>(buscarNaFloresta(nome1));
     Tree<std::string>* pessoa2 = dynamic_cast<Tree<std::string>*>(buscarNaFloresta(nome2));
+
+    if(pessoa1 == nullptr || pessoa2 == nullptr) {
+        std::cout << nome1 << " e " << nome2 << " nao tem ancestral em comum." << std::endl;
+        return false;
+    }
+
     Tree<std::string>* ancestral1 = dynamic_cast<Tree<std::string>*>(pessoa1->getParent());
     Tree<std::string>* ancestral2 = dynamic_cast<Tree<std::string>*>(pessoa2->getParent());
-    while(ancestral1 != nullptr) {
+
+    if(ancestral1 == nullptr || ancestral2 == nullptr) {
+        std::cout << nome1 << " e " << nome2 << " nao tem ancestral em comum." << std::endl;
+        return false;
+    }
+
+    while(ancestral1->level() > ancestral2->level()) {
+        ancestral1 = dynamic_cast<Tree<std::string>*>(ancestral1->getParent());
+    }
+    while(ancestral2->level() > ancestral1->level()) {
+        ancestral2 = dynamic_cast<Tree<std::string>*>(ancestral2->getParent());
+    }
+
+    while(ancestral1 != nullptr && ancestral2 != nullptr) {
         if(ancestral1 == ancestral2) {
-            std::cout << "O ancestral em comum de " << nome1 << " e " << nome2 << " é " << ancestral1 << "." << std::endl;
+            std::cout << "O ancestral em comum mais proximo de " << nome1 << " e " << nome2 << " eh " << ancestral1->getItem() << "." << std::endl;
             return true;
         }
         ancestral1 = dynamic_cast<Tree<std::string>*>(ancestral1->getParent());
-    }
-    while(ancestral2 != nullptr) {
-        if(ancestral2 == ancestral1) {
-            std::cout << "O ancestral em comum de " << nome1 << " e " << nome2 << " é " << ancestral1 << "." << std::endl;
-            return true;
-        }
         ancestral2 = dynamic_cast<Tree<std::string>*>(ancestral2->getParent());
     }
-    std::cout << nome1 << " e " << nome2 << " não tem ancestral em comum." << std::endl;
+
+    std::cout << nome1 << " e " << nome2 << " nao tem ancestral em comum." << std::endl;
     return false;
 }
 
@@ -171,9 +185,9 @@ int main() {
         std::cout << std::endl;
     }
 
-    ehAncestral("Rickard Stark", "Robb Stark"); //verdadeiro
-    ehAncestral("Rickard Stark", "Jon Snow"); //verdadeiro
-    ehAncestral("Aerys II Targaryen", "Jon Snow"); //verdadeiro
+    ancestralComumMaisProximo("Rickard Stark", "Robb Stark"); //verdadeiro
+    ancestralComumMaisProximo("Robb Stark", "Jon Snow"); //verdadeiro
+    ancestralComumMaisProximo("Aerys II Targaryen", "Jon Snow"); //era pra ser verdadeiro referente a serie mas no relacoes_got.txt ta errado
     saoIrmaos("Robb Stark", "Sansa Stark"); //verdadeiro
     saoIrmaos("Robb Stark", "Jon Snow"); //falso
     saoIrmaos("Doran Martell", "Elia Martell"); //verdadeiro
